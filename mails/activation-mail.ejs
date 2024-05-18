@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a Grupo Raiz</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, p {
+            color: #333333;
+        }
+        a {
+            color: #008cba;
+            text-decoration: none;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #008cba;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .red-text {
+            color: #e02f17;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; text-decoration: double;">Bienvenido a Grupo Raiz</h1>
+        <strong style="font-family: Helvetica, Arial, sans-serif; color: #e02f17;">Hola! <span class="red-text"><%= user.name %></span>,</strong>
+        <p>¡Te damos la bienvenida a Grupo Raiz, tu empresa inmobiliaria de confianza!</p>
+        <p style="font-size:16px; color:#026cca; font-weight: bold;">Tu código de activación es: <span class="red-text"><%= activationCode %></span></p>
+        <p>Con Grupo Raiz, encontrarás las mejores opciones para tus necesidades inmobiliarias.</p>
+        <p>Si tienes alguna pregunta o necesitas asistencia, no dudes en <a href="#" target="_blank">contactarnos</a>.</p>
+        <p>¡Esperamos que disfrutes tu experiencia con nosotros!</p>
+        <p style="text-align: right;">Atentamente,<br>El Equipo de Grupo Raiz</p>
+    </div>
+</body>
+</html>
