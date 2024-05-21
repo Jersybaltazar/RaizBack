@@ -106,7 +106,7 @@ const propertySchema = new Schema<IProperty>(
     },
     categories: {
       type: String,
-      required: true,
+
     },
     price: {
       type: Number,

@@ -13,6 +13,7 @@ propertyRouter.post(
 );
 propertyRouter.put(
   "/editProperty/:id",
+  updateAccessToken,
   isAuthentificated,
   authorizeRoles("admin"),
   editProperty
@@ -29,11 +30,13 @@ propertyRouter.get(
 //course content
 propertyRouter.put(
   "/addQuestion",
+  updateAccessToken,
   isAuthentificated,
   addQuestion
 );
 propertyRouter.put(
   "/addAnswer",
+  updateAccessToken,
   isAuthentificated,
   addAnswer
 );
@@ -44,12 +47,14 @@ propertyRouter.put(
 
 propertyRouter.get(
   "/get-properties",
+  updateAccessToken,
   isAuthentificated,
   authorizeRoles("admin"),
   getAdminAllProperties
 );  
 propertyRouter.delete(
   "/delete-property/:id",
+  updateAccessToken,
   isAuthentificated,
   authorizeRoles("admin"),
   deleteProperty

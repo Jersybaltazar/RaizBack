@@ -130,23 +130,13 @@ export const getSingleProperty = catchAsyncError(
 export const getAllProperty = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const isCacheExist = await redis.get("allProperties");
-      if (isCacheExist) {
-        const properties = JSON.parse(isCacheExist);
-        res.status(200).json({
-          success: true,
-          properties,
-        });
-      } else {
-        const properties = await PropertyModel.find().select(
-          "-propertyData.videoUrl -propertyData.suggestion -propertyData.questions -propertyData.links"
-        );
-        await redis.set("allProperties", JSON.stringify(properties));
-        res.status(200).json({
-          success: true,
-          properties,
-        });
-      }
+      const properties = await PropertyModel.find().select(
+        "-propertyData.videoUrl -propertyData.suggestion -propertyData.questions -propertyData.links"
+      );
+      res.status(200).json({
+        success: true,
+        properties,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -407,7 +397,7 @@ export const deleteProperty = catchAsyncError(
 
       const property = await PropertyModel.findById(id);
       if (!property) {
-        return next(new ErrorHandler("Property not found", 400));
+        return next(new ErrorHandler("Propiedad no encontrada", 400));
       }
       await property.deleteOne({ id });
 
@@ -415,7 +405,7 @@ export const deleteProperty = catchAsyncError(
 
       res.status(200).json({
         success: true,
-        message: "Property deleted successfully",
+        message: "Propiedad eliminada exitosamente",
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
