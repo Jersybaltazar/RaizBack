@@ -79,18 +79,18 @@ const commentSchema = new Schema<IComment>({
 });
 
 const propertyDataSchema = new Schema<IPropertyData>({
-  bedrooms: String,
-  bathrooms: String,
-  videoUrl: String,
+  bedrooms: { type: String, required: true },
+  bathrooms: { type: String, required: true },
+  videoUrl: { type: String, required: true },
   images: [{ public_id: String, url: String }],
-  size: String,
-  title: String,
-  description: String,
-  videoSection: String,
-  videoLength: Number,
-  videoPlayer: String,
+  size: { type: String, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  videoSection: { type: String, required: true },
+  videoLength: { type: Number, required: true },
+  videoPlayer: { type: String, required: true },
   links: [linkSchema],
-  virtualTour: String,
+  virtualTour: { type: String, required: true },
   questions: [commentSchema],
 });
 
@@ -106,7 +106,7 @@ const propertySchema = new Schema<IProperty>(
     },
     categories: {
       type: String,
-
+      required: true,
     },
     price: {
       type: Number,
