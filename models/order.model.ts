@@ -3,7 +3,7 @@ import mongoose,{Document,Model,Schema} from "mongoose";
 export interface IOrder extends  Document {
     propertyId:string;
     userId:string;
-    payment_info:object;
+    visit_info:object;
 }
 
 const orderSchema = new Schema<IOrder>({
@@ -15,7 +15,7 @@ const orderSchema = new Schema<IOrder>({
         type: String,
         required: true,   
     },
-    payment_info:{
+    visit_info:{
         type:Object,
     },
 
