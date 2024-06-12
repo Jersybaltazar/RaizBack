@@ -176,10 +176,11 @@ export const addQuestion = catchAsyncError(
       };
       //añadir la pregunta al contenido de la propiedad
       propertyContent.questions.push(newQuestion);
+
       await NotificationModel.create({
         user: req.user?._id,
-        title: "Nueva Pregunta",
-        message: `YOU HAve a new question in ${propertyContent.bedrooms}`,
+        title: "Nueva Pregunta recivoda",
+        message: `YOU HAve a new question in ${property?.name}`,
       });
       //guardar   la propiedad actualizada
       await property?.save();
