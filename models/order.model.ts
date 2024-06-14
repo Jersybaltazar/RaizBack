@@ -3,7 +3,8 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IOrder extends Document {
   propertyId: string;
   userId: string;
-  visit_info: object;
+  visitDate: Date;
+  visitTime: string;
   
 }
 
@@ -17,8 +18,13 @@ const orderSchema = new Schema<IOrder>(
       type: String,
       required: true,
     },
-    visit_info: {
-      type: Object,
+    visitDate: {
+      type: Date,
+      required: true,
+    },
+    visitTime: {
+      type: String,
+      required: true,
     },
    
   },

@@ -10,38 +10,48 @@ import sendMail from "../utils/sendMail";
 import NotificationModel from "../models/notification.model";
 import { newOrder } from "../services/order.service";
 import {getAllOrdesService} from "../services/order.service"
-
-
 //crear order de visita
 export const createOrder = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { propertyId, visit_info } = req.body as IOrder;
+      const { propertyId, visitDate, visitTime } = req.body as IOrder;
 
       const user = await userModel.findById(req.user?._id);
+      if (!user) {
+        return next(new ErrorHandler("Usuario no encontrado", 400));
+      }
+      const propertieExistInUser = user?.properties.some(
+        (propertie:any ) => propertie._id.toString() === propertyId
+      );
+      if (propertieExistInUser) {
+        return next(
+          new ErrorHandler("Ya visitaste esta propiedad", 400)
+        )
+      }
 
 
       const propertie = await PropertyModel.findById(propertyId);
-
       if (!propertie) {
         return next(new ErrorHandler("Propiedad no encontrada", 400));
       }
-      const data: any = {
+
+      const data :any = {
         propertyId: propertie._id,
         userId: user?._id,
-        visit_info,
+        visitDate,
+        visitTime,
       };
 
       const mailData = {
         order: {
           _id: propertie._id.toString().slice(0, 6),
           name: propertie.name,
-          price: propertie.price,
-          date: new Date().toLocaleDateString("en-US", {
+          date: new Date(visitDate).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",
           }),
+          time:visitTime
         },
       };
       const html = await ejs.renderFile(
@@ -56,7 +66,7 @@ export const createOrder = catchAsyncError(
             template: "order-confirmation.ejs",
             data: mailData,
           });
-        }
+         } 
       } catch (error: any) {
         return next(new ErrorHandler(error.message, 500));
       }
