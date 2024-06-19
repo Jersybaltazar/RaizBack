@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 // cors
 
-app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
+app.use(cors({ origin: ["raiz-front.vercel.app"], credentials: true }));
 
 // limite de respuesta de la API
 const limiter = rateLimit({
