@@ -10,6 +10,7 @@ import notificationRoute from "./routes/notification.route";
 import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
 import orderRouter from "./routes/order.route";
+import {rateLimit} from "express-rate-limit"
 //body parser
 app.use(express.json({ limit: "50mb" }));
 
@@ -20,6 +21,13 @@ app.use(cookieParser());
 
 app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
 
+// limite de respuesta de la API
+const limiter = rateLimit({
+  windowMs:15 * 60 * 1000, //15minutos
+  max:100,// Limit each ip to 1000 requests per window (here, per 15minuts)
+  standardHeaders:'draft-7', 
+  legacyHeaders:false,
+})
 app.use(
   "/api/v1",
   userRouter,
@@ -43,4 +51,7 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   err.statusCode = 404;
   next(err);
 });
+//middleware calls
+app.use(limiter);
 app.use(ErrorMiddleware);
+
