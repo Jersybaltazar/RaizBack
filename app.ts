@@ -18,17 +18,27 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 // Configuración de CORS
-// Configuración de CORS
-app.use(cors({ origin: "https://raiz-front.vercel.app", credentials: true }));
+app.use((req:Request, res:Response, next:NextFunction) => {
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://raiz-front.vercel.app"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Content-Type-Options, Accept, X-Requested-With, Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Private-Network", "true");
+  //  Firefox caps this at 24 hours (86400 seconds). Chromium (starting in v76) caps at 2 hours (7200 seconds). The default value is 5 seconds.
+  res.setHeader("Access-Control-Max-Age", 7200);
 
-// Configuración de cabeceras CORS adicionales
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://raiz-front.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+
 // limite de respuesta de la API
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, //15minutos
