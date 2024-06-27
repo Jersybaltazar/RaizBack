@@ -1,19 +1,22 @@
-import { Server as SocketIoServer } from "socket.io";
+import { Server as SocketIOServer} from "socket.io";
 import http from "http";
 
-export const initSocketServer = (server: http.Server) => {
-  const io = new SocketIoServer(server);
+export const initSocketServer = (server:http.Server) => {
+    const io = new SocketIOServer(server, {
+        cors: {
+          origin: "*", // Ajusta esto según tu configuración de CORS
+          methods: ["GET", "POST"],
+        },
+      });
 
-  io.on("connection", (socket) => {
-    console.log("Usuario Conectado");
-
-    //Escuche el evento de notificación desde el frontend
-    socket.on("notification", (data) => {
-      //Transmitir los datos de notificación a todos los clientes conectados (admindashboard)
-      io.emit("newNotification", data);
-    });
-    socket.on("disconnect", () => {
-      console.log("El usuario se ah dsconectado");
-    });
-  });
+    io.on("connection",(socket)=>{
+        console.log("A user connected");
+        // 
+        socket.on("notification",(data)=>{
+            io.emit("newNotification", data);
+        });
+        socket.on("disconnect",()=>{
+            console.log("A user disconnected");
+        }) 
+    })
 };

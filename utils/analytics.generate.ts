@@ -17,7 +17,7 @@ export async function generateLast12MonthsData<T extends Document>(
       currentDate.getMonth(),
       currentDate.getDate() - i * 28
     );
-    const starDate = new Date(
+    const startDate = new Date(
       endDate.getFullYear(),
       endDate.getMonth(),
       endDate.getDate() - 28
@@ -29,7 +29,7 @@ export async function generateLast12MonthsData<T extends Document>(
       year: "numeric",
     });
     const count = await model.countDocuments({
-      CreatedAT: { $gte: starDate, $lt: endDate },
+      createdAt: { $gte: startDate, $lt: endDate },
     });
     last12Months.push({ month: monthYear, count });
   }

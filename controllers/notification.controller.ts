@@ -35,13 +35,13 @@ export const updateNotification = catchAsyncError(
       }
       await notification.save();
 
-      const notificacions = await NotificationModel.find().sort({
+      const notifications = await NotificationModel.find().sort({
         createdAt: -1,
       });
 
       res.status(201).json({
         success: true,
-        notificacions,
+        notifications,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

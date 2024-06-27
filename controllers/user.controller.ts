@@ -188,17 +188,15 @@ export const logoutUser = catchAsyncError(
 );
 
 // update access token
-export const updateAccessToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const updateAccessToken = catchAsyncError(
+  async(req: Request, res: Response, next: NextFunction)=>{
   try {
     const refresh_token = req.cookies.refresh_token as string;
     const decoded = jwt.verify(
       refresh_token,
       process.env.REFRESH_TOKEN as string
     ) as JwtPayload;
+
     const message = "Could not refresh token";
     if (!decoded) {
       return next(new ErrorHandler(message, 400));
@@ -206,7 +204,7 @@ export const updateAccessToken = async (
     const session = await redis.get(decoded.id as string);
 
     if (!session) {
-      return next(new ErrorHandler(message, 400));
+      return next(new ErrorHandler('Por favor inicie sesión para acceder al recurso', 400));
     }
 
     const user = JSON.parse(session);
@@ -230,12 +228,12 @@ export const updateAccessToken = async (
     res.cookie("refresh_token", refreshToken, refreshTokenOptions);
     
     await redis.set(user._id, JSON.stringify(user), "EX", 604800);
-
-    next();
+    next()
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 400));
   }
-};
+}
+);
 // mostrar informacion del  usuario
 export const getUserInfo = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -349,7 +347,7 @@ interface IUpdateProfilePicture {
 export const updateProfile = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { avatar } = req.body;
+      const { avatar } = req.body as IUpdateProfilePicture;
       const userId = req.user?._id;
       const user = await userModel.findById(userId);
       if (avatar && user) {

@@ -17,7 +17,7 @@ import NotificationModel from "../models/notification.model";
 // subir propiedad
 export const uploadProperty = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    try {
+    try { 
       // Extrae el cuerpo de la solicitud (req.body) y lo asigna a la variable `data`.
       const data = req.body;
       // Extrae la propiedad `thumbnail` del objeto `data`.
@@ -64,7 +64,7 @@ export const editProperty = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body;
-      const thumbnail = data.thumbnail;
+      const { thumbnail, propertyData } = data;
 
       if (thumbnail) {
         await cloudinary.v2.uploader.destroy(thumbnail.public_id);
@@ -76,6 +76,34 @@ export const editProperty = catchAsyncError(
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
         };
+      }
+       // Manejar la actualización de imágenes en propertyData si existen
+       if (propertyData && Array.isArray(propertyData)) {
+        for (const property of propertyData) {
+          if (property.images && Array.isArray(property.images)) {
+            // Eliminar las imágenes anteriores en Cloudinary
+            for (const image of property.images) {
+              if (image.public_id) {
+                await cloudinary.v2.uploader.destroy(image.public_id);
+              }
+            }
+
+            // Subir las nuevas imágenes a Cloudinary
+            const imageUploads = await Promise.all(
+              property.images.map((image: string) =>
+                cloudinary.v2.uploader.upload(image, {
+                  folder: "Propiedades",
+                })
+              )
+            );
+
+            // Actualizar property.images con la nueva información de las imágenes subidas
+            property.images = imageUploads.map((upload) => ({
+              public_id: upload.public_id,
+              url: upload.secure_url,
+            }));
+          }
+        }
       }
 
       const propertyId = req.params.id;
@@ -142,6 +170,32 @@ export const getAllProperty = catchAsyncError(
     }
   }
 );
+
+
+//mostrar propertycontent --- para usuarios validos
+export const getPropertyByUser= catchAsyncError(
+  async(req: Request, res: Response, next: NextFunction)=> {
+    try{
+      const userPropertyList = req.user?.properties;
+      const propertyId = req.params.id;
+      const propertyExist = userPropertyList?.find(
+        (property: any) => property._id.toString() === propertyId
+      );
+      if (!propertyExist) {
+        return next(new ErrorHandler("No tiene permiso para acceder a esta propiedad", 403));
+      }
+      const property = await PropertyModel.findById(propertyId);
+      const content = property?.propertyData;
+      res.status(200).json({
+        success:true,
+        content
+      })
+    }catch(error:any){
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+)
+
 
 //añadir pregunta a a la propiedad
 interface IAddQuestionData {
@@ -361,6 +415,8 @@ export const addReplyToReview = catchAsyncError(
       const replyData: any = {
         user: req.user,
         comment,
+        cretedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       if (!review.commentReplies) {
         review.commentReplies = [];
@@ -369,6 +425,7 @@ export const addReplyToReview = catchAsyncError(
       review.commentReplies?.push(replyData);
 
       await property?.save();
+      
       res.status(200).json({
         success: true,
         property,

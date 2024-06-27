@@ -14,7 +14,7 @@ export const createLayout = catchAsyncError(
         return next(new ErrorHandler(`${type}already exist`, 400));
       }
       if (type === "Banner") {
-        const { image, title, subTtile } = req.body;
+        const { image, title, subTitle } = req.body;
         const myCloud = await cloudinary.v2.uploader.upload(image, {
           folder: "layout",
         });
@@ -26,7 +26,7 @@ export const createLayout = catchAsyncError(
               url: myCloud.secure_url,
             },
             title,
-            subTtile,
+            subTitle,
           },
         };
         await LayoutModel.create(banner);
@@ -95,7 +95,7 @@ export const editLayout = catchAsyncError(
           subTitle,
         };
 
-        await LayoutModel.findByIdAndUpdate(bannerData.id, { banner });
+        await LayoutModel.findByIdAndUpdate(bannerData._id, { banner });
       }
       if (type === "FAQ") {
         const { faq } = req.body;
@@ -132,7 +132,7 @@ export const editLayout = catchAsyncError(
       }
       res.status(200).json({
         success: true,
-        message: "Layout created succesfully",
+        message: "Diseño editado con exito",
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
